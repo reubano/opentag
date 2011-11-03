@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<command>
+	<name>someprogram</name>
+	<description><![CDATA[Description: program description.
+
+Examples:  	
+a description of what this example does
+	someprogram -xz --ctypes --table=table ~/database.sqlite ~/chart.png
+  		
+a description of what this example does
+	someprogram -x --series=none --table=table ~/database.sqlite
+
+a description of what this example does
+	someprogram -r --series=product --ltype=v --lwidth=170 --table=table ~/database.sqlite ~/chart.png
+ ]]></description>
+	<version>1.0.0</version>
+	<option name="intOption">
+		<short_name>-i</short_name>
+		<long_name>--int</long_name>
+		<description>option description, defaults to 1</description>
+		<action>StoreInt</action>
+		<help_name>int</help_name>
+	</option>
+	<option name="strOption">
+		<short_name>-s</short_name>
+		<long_name>--str</long_name>
+		<description>option description, defaults to 'string'</description>
+		<action>StoreString</action>
+		<help_name>str</help_name>
+	</option>
+	<option name="debug">
+		<short_name>-d</short_name>
+		<long_name>--debug</long_name>
+		<description>enables debug mode, displays the options and arguments passed to the parser</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="verbose">
+		<short_name>-v</short_name>
+		<long_name>--verbose</long_name>
+		<description>verbose output</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="variables">
+		<short_name>-V</short_name>
+		<long_name>--variables</long_name>
+		<description>enables variable mode, displays the value of all program variables</description>
+		<action>StoreTrue</action>
+	</option>
+	<argument name="input">
+		<description>argument description, enter '$' to read from standard input</description>
+		<help_name>input</help_name>
+	</argument>
+	<argument name="output">
+		<description>(optional) argument description, defaults to '.../someprogram/export/...'</description>
+		<help_name>output-file</help_name>
+		<optional>true</optional>
+	</argument>
+</command>
