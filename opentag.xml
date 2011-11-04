@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <command>
 	<name>opentag</name>
-	<description><![CDATA[Description: program description.
+	<description><![CDATA[Description: Manipulate file tags (both spotlight and openmeta) and rating.
 
 Examples:  	
 show tags and ratings
@@ -29,10 +29,13 @@ set tags to foo and bar for all files with "portfolio" in the name
   ls | grep -i portfolio | opentag -s foo,bar $
 
 clear all tags
-  opentag -u /path
+  opentag -c /path
 
+clear tag foo
+  opentag -u foo /path
+  
 set rating (0 - 5 stars)
-  opentag -r 3.5 /path
+  opentag -r 3 /path
 
 show rating
   opentag -R /path
@@ -47,6 +50,12 @@ clear rating
 		<description>add tag(s) (use a comma to seperate multiple tags)</description>
 		<action>StoreString</action>
 		<help_name>tag(s)</help_name>
+	</option>
+	<option name="clearTag">
+		<short_name>-c</short_name>
+		<long_name>--ctag</long_name>
+		<description>clear all tags</description>
+		<action>StoreTrue</action>
 	</option>
 	<option name="debug">
 		<short_name>-d</short_name>
@@ -96,13 +105,14 @@ clear rating
 	<option name="untag">
 		<short_name>-u</short_name>
 		<long_name>--untag</long_name>
-		<description>clear tags</description>
-		<action>StoreTrue</action>
+		<description>remove tag(s) (use a comma to seperate multiple tags)</description>
+		<action>StoreString</action>
+		<help_name>tag(s)</help_name>
 	</option>
 	<option name="unrate">
 		<short_name>-U</short_name>
 		<long_name>--unrate</long_name>
-		<description>clear rating</description>
+		<description>remove rating</description>
 		<action>StoreTrue</action>
 	</option>
 	<option name="verbose">
@@ -117,7 +127,7 @@ clear rating
 		<description>enables variable mode, displays the value of all program variables</description>
 		<action>StoreTrue</action>
 	</option>
-	<argument name="file">
+	<argument name="files">
 		<description>file(s) to tag, enter '$' to read from standard input</description>
 		<multiple>true</multiple>
 		<help_name>file</help_name>
