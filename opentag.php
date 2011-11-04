@@ -93,7 +93,7 @@ try {
 	} //<-- end if -->
 	
 	$files = $general->getFullPath($files);
-	$files = '\''.implode('\' \'', $files).'\''; // array to string	
+	$files = $general->extraImplode($files);
 	$openmeta = new openmeta($files);
 	
 	if ($addTag) {
@@ -122,24 +122,10 @@ try {
 
 	if ($tags) {
 		$openTags = $openmeta->getOpenTags();
-		
-		if (count($openTags) > 0) {
-			$openTags = implode(', ', $openTags); // array to string
-		} else {
-			$openTags = '';
-		}//<-- end if -->
-		
 		fwrite(STDOUT, "openmeta tags: $openTags\n");
 		
 		if ($spotlight) {
-			$spotlightTags = $openmeta->getSpotlightTags($prefix);
-			
-			if (count($spotlightTags) > 0) {
-				$spotlightTags = implode(', ', $spotlightTags); // array to string
-			} else {
-				$spotlightTags = '';
-			}//<-- end if -->
-			
+			$spotlightTags = $openmeta->getSpotlightTags($prefix);			
 			fwrite(STDOUT, "spotlight tags: $spotlightTags\n");
 		} //<-- end if -->
 	} //<-- end if -->
