@@ -1,37 +1,108 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <command>
-	<name>someprogram</name>
+	<name>opentag</name>
 	<description><![CDATA[Description: program description.
 
 Examples:  	
-a description of what this example does
-	someprogram -xz --ctypes --table=table ~/database.sqlite ~/chart.png
-  		
-a description of what this example does
-	someprogram -x --series=none --table=table ~/database.sqlite
+show tags and ratings
+  opentag -TR /path
 
-a description of what this example does
-	someprogram -r --series=product --ltype=v --lwidth=170 --table=table ~/database.sqlite ~/chart.png
+show tags and ratings for multiple files
+  opentag -TR /path/1 /path/2
+
+show tags
+  opentag -T /path
+
+show opentag and spotlight tags
+  opentag -sT /path
+
+add tags
+  opentag -a foo,bar /path
+
+add opentag and spotlight tags (prefix with spotlight tags with '@')
+  opentag -sa -p '@' foo,bar /path
+  
+add tags with spaces to all pdf files
+  opentag -a "three word tag","foo bar" *.pdf
+
+set tags to foo and bar for all files with "portfolio" in the name
+  ls | grep -i portfolio | opentag -s foo,bar $
+
+clear all tags
+  opentag -u /path
+
+set rating (0 - 5 stars)
+  opentag -r 3.5 /path
+
+show rating
+  opentag -R /path
+
+clear rating
+  opentag -U /path
  ]]></description>
 	<version>1.0.0</version>
-	<option name="intOption">
-		<short_name>-i</short_name>
-		<long_name>--int</long_name>
-		<description>option description, defaults to 1</description>
-		<action>StoreInt</action>
-		<help_name>int</help_name>
-	</option>
-	<option name="strOption">
-		<short_name>-s</short_name>
-		<long_name>--str</long_name>
-		<description>option description, defaults to 'string'</description>
+	<option name="addTag">
+		<short_name>-a</short_name>
+		<long_name>--atag</long_name>
+		<description>add tag(s) (use a comma to seperate multiple tags)</description>
 		<action>StoreString</action>
-		<help_name>str</help_name>
+		<help_name>tag(s)</help_name>
 	</option>
 	<option name="debug">
 		<short_name>-d</short_name>
 		<long_name>--debug</long_name>
 		<description>enables debug mode, displays the options and arguments passed to the parser</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="prefix">
+		<short_name>-p</short_name>
+		<long_name>--prefix</long_name>
+		<description>spotlight comment tag prefix, defaults to '&amp;'</description>
+		<action>StoreString</action>
+		<help_name>prefix</help_name>
+	</option>
+	<option name="rate">
+		<short_name>-r</short_name>
+		<long_name>--rate</long_name>
+		<description>set rating (0 - 5)</description>
+		<action>StoreInt</action>
+		<help_name>rating</help_name>
+	</option>
+	<option name="rating">
+		<short_name>-R</short_name>
+		<long_name>--rating</long_name>
+		<description>show rating</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="spotlight">
+		<short_name>-s</short_name>
+		<long_name>--spotlight</long_name>
+		<description>apply tagging commands to spotlight comments</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="setTag">
+		<short_name>-t</short_name>
+		<long_name>--stag</long_name>
+		<description>set tag(s) (use a comma to seperate multiple tags)</description>
+		<action>StoreString</action>
+		<help_name>tag(s)</help_name>
+	</option>
+	<option name="tags">
+		<short_name>-T</short_name>
+		<long_name>--tags</long_name>
+		<description>show tags</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="untag">
+		<short_name>-u</short_name>
+		<long_name>--untag</long_name>
+		<description>clear tags</description>
+		<action>StoreTrue</action>
+	</option>
+	<option name="unrate">
+		<short_name>-U</short_name>
+		<long_name>--unrate</long_name>
+		<description>clear rating</description>
 		<action>StoreTrue</action>
 	</option>
 	<option name="verbose">
@@ -46,13 +117,9 @@ a description of what this example does
 		<description>enables variable mode, displays the value of all program variables</description>
 		<action>StoreTrue</action>
 	</option>
-	<argument name="input">
-		<description>argument description, enter '$' to read from standard input</description>
-		<help_name>input</help_name>
-	</argument>
-	<argument name="output">
-		<description>(optional) argument description, defaults to '.../someprogram/export/...'</description>
-		<help_name>output-file</help_name>
-		<optional>true</optional>
+	<argument name="file">
+		<description>file(s) to tag, enter '$' to read from standard input</description>
+		<multiple>true</multiple>
+		<help_name>file</help_name>
 	</argument>
 </command>
