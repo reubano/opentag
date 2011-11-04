@@ -2,3 +2,7 @@
 	url = lib_general
 	path = lib_general
 	branch = master
+[subtree "lib_openmeta"]
+	url = lib_openmeta
+	path = lib_openmeta
+	branch = master
