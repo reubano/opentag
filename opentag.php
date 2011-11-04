@@ -10,14 +10,15 @@ $thisProjectDir		= dirname(__FILE__);
 $timeStamp			= date("mdy").'_'.date("His"); // format to mmddyy_hhmmss
 $stdin 				= FALSE;
 $prefix 			= '&';
-$allFiles			= '';
-$addTag				= '';
-$setTag				= '';
-$rate				= 0;
+$addTag				= NULL;
+$setTag				= NULL;
+$untag				= NULL;
+$rate				= NULL;
 
 // include files
 require_once 'Console/CommandLine.php';
 require_once $thisProjectDir.'/lib_general/General.inc.php';
+require_once $thisProjectDir.'/lib_openmeta/Openmeta.inc.php';
 
 // create the parser from xml file
 $xmlFile = $thisProjectDir.'/opentag.xml';
@@ -28,9 +29,9 @@ try {
 	$result = $parser->parse();
 
 	// command argument
-	$file = $result->args['file'];
+	$files = $result->args['files'];
 	
-	if ($file == '$') {
+	if ($files == '$') {
 		$stdin = TRUE;
 	} //<-- end if -->
 	
@@ -41,7 +42,7 @@ try {
 	$rating		= $result->options['rating'];
 	$spotlight	= $result->options['spotlight'];
 	$tags		= $result->options['tags'];
-	$untag		= $result->options['untag'];
+	$clearTag	= $result->options['clearTag'];
 	$unrate		= $result->options['unrate'];
 	
 	// program setting
@@ -65,6 +66,10 @@ try {
 		$setTag = $result->options['setTag'];
 	} //<-- end if -->
 
+	if ($result->options['untag']) {
+		$untag = $result->options['untag'];
+	} //<-- end if -->
+
 	// debug and variable mode settings
 	if ($debugmode OR $varmode) {
 		if ($debugmode) {
@@ -83,69 +88,73 @@ try {
 
 	// execute program
 	if($stdin) {
-		$file = $general->readSTDIN();
-		$file = explode("\n", $file); // turn string to array
-		array_pop($file); // remove last element since it is empty
+		$files = $general->readSTDIN();
+		$files = $general->lines2Array($files);
 	} //<-- end if -->
-			
-	foreach ($file as $key => $value) {
-		if (strpos($value, '/') === FALSE) {
-			$file[$key] = '"'.exec("pwd").'/'.$value.'"';
-		} //<-- end if -->
-	} //<-- end foreach -->
+	
+	$files = $general->getFullPath($files);
+	$files = '\''.implode('\' \'', $files).'\''; // array to string	
+	$openmeta = new openmeta($files);
+	
+	if ($addTag) {
+		$openTags = str_replace(',', ' ', $addTag);
+		$openmeta->addOpenTags($openTags);
+	} //<-- end if -->
 
-	foreach ($file as $aFile) {
-		$allFiles .= $aFile.' ';
-	} //<-- end foreach -->
-	
-	$allFiles = trim($allFiles);
-	
-	if ($addTag || $setTag) {
-		$theTags = str_replace(',', ' ', $addTag);
-		
-		if ($addTag) {
-			exec("openmeta -a $theTags -p $allFiles");
-		} else {
-			exec("openmeta -s $theTags -p $allFiles");
-		} //<-- end if -->
+	if ($setTag) {
+		$openTags = str_replace(',', ' ', $setTag);
+		$openmeta->setOpenTags($openTags);
 	} //<-- end if -->
 	
+	if ($clearTag) {
+		$openmeta->clearOpenTags();
+	} //<-- end if -->
+
+	if ($addTag) {
+		$openTags = str_replace(',', ' ', $addTag);
+		$openmeta->addOpenTags($openTags);
+	} //<-- end if -->
+
 	if ($untag) {
-		exec("openmeta -s -p $allFiles");
+		$openTags = str_replace(',', ' ', $untag);
+		$openmeta->removeOpenTags($openTags);
 	} //<-- end if -->
-	
-	if ($tags) {
-		exec("mdls -name kMDItemOMUserTags -raw $allFiles", $output);
-		array_pop($output);
-		array_shift($output);
-		foreach 
-		print_r($output);
-		fwrite(STDOUT, "openmeta: \n");
 
+	if ($tags) {
+		$openTags = $openmeta->getOpenTags();
+		
+		if (count($openTags) > 0) {
+			$openTags = implode(', ', $openTags); // array to string
+		} else {
+			$openTags = '';
+		}//<-- end if -->
+		
+		fwrite(STDOUT, "openmeta tags: $openTags\n");
+		
 		if ($spotlight) {
-			$comment = exec("mdls -name kMDItemFinderComment -raw $allFiles");	
-			$comment = explode(' ', $comment);
+			$spotlightTags = $openmeta->getSpotlightTags($prefix);
 			
-			foreach ($comment as $chunk) {
-				if (strpos($chunk, $prefix) === 0) {
-					$tags .= str_replace($prefix, '', $chunk).' ';
-				} //<-- end if -->
-			} //<-- end foreach -->
+			if (count($spotlightTags) > 0) {
+				$spotlightTags = implode(', ', $spotlightTags); // array to string
+			} else {
+				$spotlightTags = '';
+			}//<-- end if -->
 			
-			fwrite(STDOUT, "spotlight: $tags\n");
+			fwrite(STDOUT, "spotlight tags: $spotlightTags\n");
 		} //<-- end if -->
 	} //<-- end if -->
 	
 	if ($rate) {
-		exec("openmeta -r $rate -p $allFiles");
+		$openmeta->setRating($rate);
 	} //<-- end if -->
 	
 	if ($unrate) {
-		exec("openmeta -r 0 -p $allFiles");
+		$openmeta->clearRating($rate);
 	} //<-- end if -->
 	
 	if ($rating) {
-		exec("openmeta -r -p $allFiles");
+		$rating = $openmeta->getRating();
+		fwrite(STDOUT, "rating: $rating[0]\n");
 	} //<-- end if -->
 	
 	exit(0);
