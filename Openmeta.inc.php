@@ -119,7 +119,7 @@ class Openmeta {
 	/************************************************************************** 
 	 * Return openmeta tags
 	 *
-	 * @return 	string	$this->openTags	the current openmeta tags
+	 * @return 	string	$openTags	the current openmeta tags
 	 *************************************************************************/
 	public function getOpenTags() {
 		try {
@@ -139,7 +139,13 @@ class Openmeta {
 				} //<-- end if -->
 			} //<-- end if -->
 			
-			return $this->openTags;
+		if (count($this->openTags) > 0) {
+			$openTags = implode(', ', $this->openTags); // array to string
+		} else {
+			$openTags = '';
+		}//<-- end if -->
+		
+			return $openTags;
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
@@ -150,8 +156,8 @@ class Openmeta {
 	/************************************************************************** 
 	 * Return spotlight tags
 	 *
-	 * @param 	string	$prefix					spotlight comment tag prefix
-	 * @return 	string	$this->spotlightTags	the current spotlight tags
+	 * @param 	string	$prefix			spotlight comment tag prefix
+	 * @return 	string	$spotlightTags	the current spotlight tags
 	 *************************************************************************/
 	public function getSpotlightTags($prefix) {
 		try {
@@ -169,8 +175,14 @@ class Openmeta {
 					sort($this->spotlightTags);
 				} //<-- end if -->
 			} //<-- end if -->
-			
-			return $this->spotlightTags;
+
+			if (count($this->spotlightTags) > 0) {
+				$spotlightTags = implode(', ', $this->spotlightTags); // array to string
+			} else {
+				$spotlightTags = '';
+			}//<-- end if -->
+
+			return $spotlightTags;
 		} catch (Exception $e) { 
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
