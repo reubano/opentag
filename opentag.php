@@ -91,10 +91,9 @@ try {
 		$files = $general->readSTDIN();
 		$files = $general->lines2Array($files);
 	} //<-- end if -->
-	
+
 	$files = $general->getFullPath($files);
-	$files = $general->extraImplode($files);
-	$openmeta = new openmeta($files);
+	$openmeta = new openmeta($files, $thisProjectDir);
 	
 	if ($addTag) {
 		$openTags = str_replace(',', ' ', $addTag);
