@@ -3,12 +3,17 @@
  * purpose: contains metadata functions
  *****************************************************************************/
 
+// include files
+$thisProjectDir	= dirname(dirname(__FILE__));
+require_once $thisProjectDir.'/lib_general/General.inc.php';
+
 //<-- begin class -->
 class Openmeta {
 	protected $className 	= __CLASS__;	// class name
 	protected $verbose;
 	protected $files;
-	protected $openmeta 	= '~/Documents/Projects/opentag/lib_openmeta/openmeta';
+	protected $fileList;
+	protected $openmeta;
 	public $openTags;
 	public $spotlightTags;
 	public $rating;
@@ -17,8 +22,10 @@ class Openmeta {
 	 *
 	 * @param 	boolean $verbose	enable verbose comments
 	 *************************************************************************/
-	function __construct($files, $verbose = FALSE) {
+	function __construct($files, $projectDir, $verbose = FALSE) {
 		$this->files = $files;
+		$this->fileList = general::extraImplode($files);
+		$this->openmeta = $projectDir.'/lib_openmeta/openmeta';
 		$this->verbose = $verbose;
 		
 		if ($this->verbose) {
