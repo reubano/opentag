@@ -36,8 +36,8 @@ class Openmeta {
 	/************************************************************************** 
 	 * Adds openmeta tags
 	 *
-	 * @param 	string 	$tags			space delimited tags to add
-	 * @return 	string	$this->openTags	the resulting openmeta tags
+	 * @param 	string 	$tags		space delimited tags to add
+	 * @return 	string	$openTags	the resulting openmeta tags
 	 * @throws 	Exception if $tags is empty
 	 *************************************************************************/
 	public function addOpenTags($tags) {
@@ -47,18 +47,23 @@ class Openmeta {
 			);
 		} else {
 			try {
-				exec("$this->openmeta -a $tags -p $this->files");
+				exec("$this->openmeta -a $tags -p $this->fileList", $openTags);
+				$count = count($openTags);
 				
-				if (isset($this->openTags)) {
-					$this->openTags[] = explode(' ', $tags);
+				if ($count > 0) {				
+					$openTags = array_map(
+						'rtrim',
+						$openTags,
+						array_fill(0, $count, implode(' ', $this->files))
+					);
 					
-					if (count($this->openTags) > 1) {
-						sort($this->openTags);
-					} //<-- end if -->
-				} else {
-					self::getOpenTags();
+					$this->openTags = array();
+					
+					foreach ($openTags as $tag) {
+						$this->openTags[] = explode(' ', $tag);
+					} //<-- end foreach -->
 				} //<-- end if -->
-				
+					
 				return $this->openTags;
 			} catch (Exception $e) { 
 				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
@@ -82,13 +87,22 @@ class Openmeta {
 			);
 		} else {
 			try {
-				exec("$this->openmeta -s $tags -p $this->files");
-				$this->openTags = explode(' ', $tags);
+				exec("$this->openmeta -s $tags -p $this->fileList");
 				
-				if (count($this->openTags) > 1) {
-					sort($this->openTags);
-				} //<-- end if -->
+				$this->openTags = array();
+				$count = count($this->files);
+				$i = 0;
+
+				while ($i < $count) {
+					$this->openTags[$i] = explode(' ', $tags);
 					
+					if (count($this->openTags[$i]) > 1) {
+						sort($this->openTags[$i]);
+					} //<-- end if -->
+					
+					$i++;
+				} //<-- end foreach -->
+
 				return $this->openTags;
 			} catch (Exception $e) { 
 				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
@@ -101,7 +115,7 @@ class Openmeta {
 	/************************************************************************** 
 	 * Sets openmeta rating
 	 *
-	 * @param 	string 	$rating the rating
+	 * @param 	string 	$rating 		the rating
 	 * @return 	string	$this->rating	the set rating
 	 * @throws 	Exception if $rating is empty
 	 *************************************************************************/
@@ -113,7 +127,7 @@ class Openmeta {
 		} else {
 			try {
 				$this->rating = $rating;
-				exec("$this->openmeta -r $this->rating -p $this->files");
+				exec("$this->openmeta -r $this->rating -p $this->fileList");
 				return $this->rating;
 			} catch (Exception $e) { 
 				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
@@ -126,33 +140,36 @@ class Openmeta {
 	/************************************************************************** 
 	 * Return openmeta tags
 	 *
-	 * @return 	string	$openTags	the current openmeta tags
+	 * @return 	array	$tags	the current openmeta tags
 	 *************************************************************************/
 	public function getOpenTags() {
 		try {
-			if (!isset($this->openTags)) {
-				exec("mdls -name kMDItemOMUserTags -raw $this->files", $this->openTags);
-				array_shift($this->openTags); // remove '('
-				array_pop($this->openTags); // remove ')'
-				$count = count($this->openTags);
-				
-				if ($count > 0) {
-					sort($this->openTags);
-					$this->openTags = array_map(
-						'trim',
-						$this->openTags,
-						array_fill(0, $count, " \t,")
-					);
-				} //<-- end if -->
-			} //<-- end if -->
+			exec("mdls -name kMDItemOMUserTags -raw $this->fileList", $tags);
+			array_shift($tags); // remove first '('
+			$child = array();
+			$openTags = array();
 			
-		if (count($this->openTags) > 0) {
-			$openTags = implode(', ', $this->openTags); // array to string
-		} else {
-			$openTags = '';
-		}//<-- end if -->
+			foreach ($tags as $tag) {
+				if (strpos($tag, ')') !== 0) {
+					$child[] = trim($tag, ", \t");
+				} else {
+					$openTags[] = $child;
+					$child = array();
+				} //<-- end if -->
+			} //<-- end foreach -->
 		
-			return $openTags;
+			$this->openTags = $openTags;
+			$tags = array();
+			
+			foreach ($openTags as $key => $tag) {
+				$tags[$key] = implode(', ', $tag); // array to string
+				
+				if (count($tags[$key]) > 1) {
+					sort($tags[$key]);
+				} //<-- end if -->
+			} //<-- end foreach -->
+		
+		return $tags;
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
@@ -164,32 +181,51 @@ class Openmeta {
 	 * Return spotlight tags
 	 *
 	 * @param 	string	$prefix			spotlight comment tag prefix
-	 * @return 	string	$spotlightTags	the current spotlight tags
+	 * @return 	array	$tags	the current spotlight tags
 	 *************************************************************************/
 	public function getSpotlightTags($prefix) {
 		try {
-			if (!isset($this->spotlightTags)) {
-				$tags = exec("mdls -name kMDItemFinderComment -raw $this->files");
-				$tags = explode(' ', $tags);
-
-				foreach ($tags as $tag) {
-					if (strpos($tag, $prefix) === 0) {
-						$this->spotlightTags[] = str_replace($prefix, '', $tag);
-					} //<-- end if -->
-				} //<-- end foreach -->
+			exec("mdls -name kMDItemFinderComment $this->fileList", $tags);
+			$count = count($tags);
 			
-				if (count($this->spotlightTags) > 1) {
-					sort($this->spotlightTags);
-				} //<-- end if -->
+			if ($count > 0) {				
+				$tags = array_map(
+					'trim',
+					$tags,
+					array_fill(0, $count, ' kMDItemFinderComment="')
+				);
+				
+				$child = array();
+				$spotlightTags = array();
+				
+				foreach ($tags as $tag) {
+					$files[] = explode(' ', $tag);
+				} //<-- end foreach -->
+				
+				foreach ($files as $file) {
+					foreach ($file as $tag) {
+						if (strpos($tag, $prefix) === 0) {
+							$child[] = str_replace($prefix, '', $tag);
+						} //<-- end if -->
+					} //<-- end foreach -->
+					
+					if ($child == array()) {
+						$child = array('(null)');
+					} //<-- end if -->
+					
+					$spotlightTags[] = $child;
+					$child = array();
+				} //<-- end foreach -->
 			} //<-- end if -->
-
-			if (count($this->spotlightTags) > 0) {
-				$spotlightTags = implode(', ', $this->spotlightTags); // array to string
-			} else {
-				$spotlightTags = '';
-			}//<-- end if -->
-
-			return $spotlightTags;
+							
+			$this->spotlightTags = $spotlightTags;
+			$tags = array();
+			
+			foreach ($spotlightTags as $tag) {
+				$tags[] = implode(', ', $tag); // array to string
+			} //<-- end foreach -->
+			
+			return $tags;
 		} catch (Exception $e) { 
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
@@ -200,12 +236,19 @@ class Openmeta {
 	/************************************************************************** 
 	 * Return rating
 	 *
-	 * @return 	string	$this->rating	the rating
+	 * @return 	array	$this->rating	the rating
 	 *************************************************************************/
 	public function getRating() {
 		try {
-			if (!isset($this->rating)) {
-				exec("mdls -name kMDItemStarRating -raw $this->files", $this->rating);
+			exec("mdls -name kMDItemStarRating $this->fileList", $rating);
+			$count = count($rating);
+
+			if ($count > 0) {	
+				$this->rating = array_map(
+					'trim',
+					$rating,
+					array_fill(0, $count, ' kMDItemStarRating=')
+				);
 			} //<-- end if -->
 			
 			return $this->rating;
@@ -223,7 +266,7 @@ class Openmeta {
 	 *************************************************************************/
 	public function clearOpenTags() {
 		try {
-			$result = exec("$this->openmeta -s -p $this->files");
+			$result = exec("$this->openmeta -s -p $this->fileList");
 			$this->openTags = array();
 			return $result;
 		} catch (Exception $e) { 
@@ -242,20 +285,39 @@ class Openmeta {
 	public function removeOpenTags($tags) {
 		try {
 			$tags = explode(' ', $tags); // string to array
-			
+
 			if (!isset($this->openTags)) {
 				self::getOpenTags();
 			} //<-- end if -->
-			
-			$remainingTags = array_diff($this->openTags, $tags);
-			
-			if (count($remainingTags) > 0) {
-				$remainingTags = implode(' ', $remainingTags); // array to string
+			$remainingTags = array();
+				
+			foreach ($this->openTags as $file) {
+				$remainingTags[] = array_diff($file, $tags);
+			} //<-- end foreach -->
+
+			$count = count($remainingTags);
+			if ($count > 0) {
+				$i = 0;
 				self::clearOpenTags();
-				self::addOpenTags($remainingTags);
+				
+				while ($i < $count) {
+					$tags = implode(' ', $remainingTags[$i]); // array to string
+					$this->fileList = '\''.$this->files[$i].'\'';
+					self::addOpenTags($tags);
+					$i++;
+				} //<-- end while -->
+				
+				$this->fileList = general::extraImplode($this->files);
 			} //<-- end if -->
+
+			$this->openTags = $remainingTags;
+			$tags = array();
 			
-			return $this->openTags;
+			foreach ($remainingTags as $tag) {
+				$openTags[] = implode(', ', $tag); // array to string
+			} //<-- end foreach -->
+			
+			return $openTags;
 		} catch (Exception $e) { 
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
@@ -270,7 +332,7 @@ class Openmeta {
 	 *************************************************************************/
 	public function clearRating() {
 		try {
-			$result = exec("$this->openmeta -r 0 -p $this->files");
+			$result = exec("$this->openmeta -r 0 -p $this->fileList");
 			$this->rating = 0;
 			return $result;
 		} catch (Exception $e) { 
