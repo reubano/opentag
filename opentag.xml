@@ -4,26 +4,23 @@
 	<description><![CDATA[Description: Manipulate file tags (both spotlight and openmeta) and rating.
 
 Examples:  	
-show tags and ratings
-  opentag -TR /path
+show tags
+  opentag -T /path
 
 show tags and ratings for multiple files
   opentag -TR /path/1 /path/2
 
-show tags
-  opentag -T /path
-
 show opentag and spotlight tags
   opentag -sT /path
 
-add tags
+add tags foo and bar
   opentag -a foo,bar /path
 
-add opentag and spotlight tags (prefix with spotlight tags with '@')
+add opentag and spotlight tags (prefix spotlight tags with '@')
   opentag -sa -p '@' foo,bar /path
   
-add tags with spaces to all pdf files
-  opentag -a "three word tag","foo bar" *.pdf
+add tags foo and bar to all pdf files
+  opentag -a foo,bar *.pdf
 
 set tags to foo and bar for all files with "portfolio" in the name
   ls | grep -i portfolio | opentag -s foo,bar $
@@ -99,7 +96,7 @@ clear rating
 	<option name="tags">
 		<short_name>-T</short_name>
 		<long_name>--tags</long_name>
-		<description>show tags</description>
+		<description>show all tags</description>
 		<action>StoreTrue</action>
 	</option>
 	<option name="untag">
