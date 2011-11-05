@@ -121,11 +121,17 @@ try {
 
 	if ($tags) {
 		$openTags = $openmeta->getOpenTags();
-		fwrite(STDOUT, "openmeta tags: $openTags\n");
+		
+		foreach ($openTags as $tag) {
+			fwrite(STDOUT, "openmeta tags: $tag\n");
+		} //<-- end foreach -->
 		
 		if ($spotlight) {
-			$spotlightTags = $openmeta->getSpotlightTags($prefix);			
-			fwrite(STDOUT, "spotlight tags: $spotlightTags\n");
+			$spotlightTags = $openmeta->getSpotlightTags($prefix);
+			
+			foreach ($spotlightTags as $tag) {		
+				fwrite(STDOUT, "spotlight tags: $tag\n");
+			} //<-- end foreach -->
 		} //<-- end if -->
 	} //<-- end if -->
 	
@@ -139,7 +145,10 @@ try {
 	
 	if ($rating) {
 		$rating = $openmeta->getRating();
-		fwrite(STDOUT, "rating: $rating[0]\n");
+		
+		foreach ($rating as $aRating) {
+			fwrite(STDOUT, "rating: $aRating\n");
+		} //<-- end foreach -->
 	} //<-- end if -->
 	
 	exit(0);
