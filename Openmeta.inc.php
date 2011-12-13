@@ -1,7 +1,7 @@
 <?php
-/******************************************************************************
+/*******************************************************************************
  * purpose: contains metadata functions
- *****************************************************************************/
+ ******************************************************************************/
 
 // include files
 $thisProjectDir	= dirname(dirname(__FILE__));
@@ -17,11 +17,14 @@ class Openmeta {
 	public $openTags;
 	public $spotlightTags;
 	public $rating;
-	/************************************************************************** 
+	
+	/*************************************************************************** 
 	 * The class constructor
 	 *
+	 * @param 	array $files		list of files
+	 * @param 	string $projectDir	project directory
 	 * @param 	boolean $verbose	enable verbose comments
-	 *************************************************************************/
+	 **************************************************************************/
 	function __construct($files, $projectDir, $verbose = FALSE) {
 		$this->files = $files;
 		$this->fileList = general::extraImplode($files);
@@ -33,34 +36,39 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Adds openmeta tags
 	 *
-	 * @param 	string 	$tags		space delimited tags to add
-	 * @return 	string	$openTags	the resulting openmeta tags
+	 * @param 	string 	$tags			space delimited tags to add
+	 * @return 	array	$this->openTags	the resulting openmeta tags
 	 * @throws 	Exception if $tags is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function addOpenTags($tags) {
 		if (empty($tags)) {
-			throw new Exception('Empty string passed from '.__CLASS__.'->'.
+			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
 			try {
-				exec("$this->openmeta -a $tags -p $this->fileList", $openTags);
-				$count = count($openTags);
+				// set result (new complete list of tags) to $openTagList
+				exec("$this->openmeta -a $tags -p $this->fileList", 
+					$openTagList
+				);
+				
+				$count = count($openTagList);
 				
 				if ($count > 0) {				
-					$openTags = array_map(
+					$openTagList = array_map(
 						'rtrim',
-						$openTags,
+						$openTagList,
 						array_fill(0, $count, implode(' ', $this->files))
 					);
 					
+					// reset $this->openTags since I have the new complete list
 					$this->openTags = array();
 					
-					foreach ($openTags as $tag) {
-						$this->openTags[] = explode(' ', $tag);
+					foreach ($openTagList as $tags) {
+						$this->openTags[] = explode(' ', $tags);
 					} //<-- end foreach -->
 				} //<-- end if -->
 					
@@ -74,21 +82,21 @@ class Openmeta {
 	} //<-- end function -->
 
 	/************************************************************************** 
+	/*************************************************************************** 
 	 * Sets openmeta tags
 	 *
 	 * @param 	string 	$tags 			space delimited tags to set
-	 * @return 	string	$this->openTags	the set openmeta tags
+	 * @return 	array	$this->openTags	the set openmeta tags
 	 * @throws 	Exception if $tags is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function setOpenTags($tags) {
 		if (empty($tags)) {
-			throw new Exception('Empty string passed from '.__CLASS__.'->'.
+			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
 			try {
 				exec("$this->openmeta -s $tags -p $this->fileList");
-				
 				$this->openTags = array();
 				$count = count($this->files);
 				$i = 0;
@@ -118,7 +126,7 @@ class Openmeta {
 	 * @param 	string 	$rating 		the rating
 	 * @return 	string	$this->rating	the set rating
 	 * @throws 	Exception if $rating is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function setRating($rating) {
 		if (empty($rating)) {
 			throw new Exception('Empty rating passed from '.__CLASS__.'->'.
@@ -137,11 +145,11 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Return openmeta tags
 	 *
 	 * @return 	array	$tags	the current openmeta tags
-	 *************************************************************************/
+	 **************************************************************************/
 	public function getOpenTags() {
 		try {
 			exec("mdls -name kMDItemOMUserTags -raw $this->fileList", $tags);
@@ -157,18 +165,27 @@ class Openmeta {
 					$child = array();
 				} //<-- end if -->
 			} //<-- end foreach -->
-		
-			$this->openTags = $openTags;
-			$tags = array();
 			
-			foreach ($openTags as $key => $tag) {
-				$tags[$key] = implode(', ', $tag); // array to string
+			unset($tags);
+
+			if (count($openTags) > 0) {
+				$this->openTags = $openTags;
 				
-				if (count($tags[$key]) > 1) {
-					sort($tags[$key]);
-				} //<-- end if -->
-			} //<-- end foreach -->
-		
+				// use $tags to display tag array as comma separated values			
+				foreach ($openTags as $key => $tag) {
+					sort($tag);
+					$tags[$key] = implode(', ', $tag); // array to string
+					
+					if (count($tags[$key]) > 1) {
+						sort($tags[$key]);
+					} //<-- end if -->
+				} //<-- end foreach -->
+			} else {
+				foreach ($this->files as $key => $value) {
+					$tags[$key] = '(null)';
+				} //<-- end foreach -->
+			} //<-- end if -->
+			
 		return $tags;
 		} catch (Exception $e) {
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
@@ -177,22 +194,28 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Return spotlight tags
 	 *
-	 * @param 	string	$prefix			spotlight comment tag prefix
+	 * @param 	string	$prefix	spotlight comment tag prefix
 	 * @return 	array	$tags	the current spotlight tags
-	 *************************************************************************/
-	public function getSpotlightTags($prefix) {
+	 **************************************************************************/
+	public function getSpotlightTags($prefix = '&') {
 		try {
 			exec("mdls -name kMDItemFinderComment $this->fileList", $tags);
 			$count = count($tags);
-			
+
 			if ($count > 0) {				
 				$tags = array_map(
-					'trim',
+					'ltrim',
 					$tags,
 					array_fill(0, $count, ' kMDItemFinderComment="')
+				);
+
+				$tags = array_map(
+					'rtrim',
+					$tags,
+					array_fill(0, $count, '"')
 				);
 				
 				$child = array();
@@ -222,6 +245,7 @@ class Openmeta {
 			$tags = array();
 			
 			foreach ($spotlightTags as $tag) {
+				sort($tag);
 				$tags[] = implode(', ', $tag); // array to string
 			} //<-- end foreach -->
 			
@@ -233,11 +257,11 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Return rating
 	 *
 	 * @return 	array	$this->rating	the rating
-	 *************************************************************************/
+	 **************************************************************************/
 	public function getRating() {
 		try {
 			exec("mdls -name kMDItemStarRating $this->fileList", $rating);
@@ -259,11 +283,11 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Clear all openmeta tags
 	 *
-	 * @return 	string	$result		the last line from openmeta command
-	 *************************************************************************/
+	 * @return 	string	$result	the last line from openmeta command
+	 **************************************************************************/
 	public function clearOpenTags() {
 		try {
 			$result = exec("$this->openmeta -s -p $this->fileList");
@@ -277,11 +301,12 @@ class Openmeta {
 	} //<-- end function -->
 
 	/************************************************************************** 
+	/*************************************************************************** 
 	 * Remove requested openmeta tags
 	 *
-	 * @param 	string 	$tags 	space delimited tags to remove
-	 * @return 	string	$this->openTags	the resulting openmeta tags
-	 *************************************************************************/
+	 * @param 	string 	$tags 			space delimited tags to remove
+	 * @return 	array	$openTagList	the resulting openmeta tags
+	 **************************************************************************/
 	public function removeOpenTags($tags) {
 		try {
 			$tags = explode(' ', $tags); // string to array
@@ -289,6 +314,7 @@ class Openmeta {
 			if (!isset($this->openTags)) {
 				self::getOpenTags();
 			} //<-- end if -->
+
 			$remainingTags = array();
 				
 			foreach ($this->openTags as $file) {
@@ -296,16 +322,13 @@ class Openmeta {
 			} //<-- end foreach -->
 
 			$count = count($remainingTags);
+
 			if ($count > 0) {
-				$i = 0;
-				self::clearOpenTags();
-				
-				while ($i < $count) {
-					$tags = implode(' ', $remainingTags[$i]); // array to string
-					$this->fileList = '\''.$this->files[$i].'\'';
-					self::addOpenTags($tags);
-					$i++;
-				} //<-- end while -->
+				foreach ($this->files as $key => $value) {
+					$tags = implode(' ', $remainingTags[$key]);
+					$this->fileList = '\''.$value.'\'';
+					self::setOpenTags($tags);
+				} //<-- end foreach -->
 				
 				$this->fileList = general::extraImplode($this->files);
 			} //<-- end if -->
@@ -314,10 +337,10 @@ class Openmeta {
 			$tags = array();
 			
 			foreach ($remainingTags as $tag) {
-				$openTags[] = implode(', ', $tag); // array to string
+				$openTagList[] = implode(', ', $tag); // array to string
 			} //<-- end foreach -->
 			
-			return $openTags;
+			return $openTagList;
 		} catch (Exception $e) { 
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
 				__FUNCTION__.'() line '.__LINE__
@@ -329,7 +352,7 @@ class Openmeta {
 	 * Clear rating
 	 *
 	 * @return 	string	$result		the last line from openmeta command
-	 *************************************************************************/
+	 **************************************************************************/
 	public function clearRating() {
 		try {
 			$result = exec("$this->openmeta -r 0 -p $this->fileList");
