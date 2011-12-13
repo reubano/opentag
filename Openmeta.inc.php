@@ -81,7 +81,56 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
+	 * Adds spotlight tags
+	 *
+	 * @param 	string 	$tags					space delimited tags to add
+	 * @return 	array	$this->spotlightTags	the resulting spotlight tags
+	 * @throws 	Exception if $tags is empty
+	 **************************************************************************/
+	public function addSpotlightTags($tags, $prefix = '&') {
+		if (empty($tags)) {
+			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} else {
+			try {
+				if (!isset($this->spotlightTags)) {
+					self::getSpotlightTags();
+				} //<-- end if -->
+				
+				$additionalTags = self::_makeSpotlightTags($tags, $prefix);
+				$additionalTags = explode(' ', $tags);
+
+				foreach ($this->spotlightTags as $key => $value) {
+					$spotlightTags[$key] = array_merge($value, $additionalTags);
+					$spotlightTags[$key] = array_unique($spotlightTags[$key]);
+					$spotlightTagList[$key] = implode(' ', 
+						$spotlightTags[$key]
+					);
+				} //<-- end foreach -->
+				
+				$files = $this->files;
+				
+				foreach ($files as $key => $value) {
+					$this->files = array($value);
+					self::setSpotlightTags($spotlightTagList[$key], $prefix);
+				} //<-- end foreach -->
+								
+				if (count($spotlightTags) > 0) {									
+					$this->spotlightTags = $spotlightTags;
+				} //<-- end if -->
+
+				$this->files = $files;
+				return $this->spotlightTags;
+			} catch (Exception $e) { 
+				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+					__FUNCTION__.'() line '.__LINE__
+				);
+			} //<-- end try -->
+		} //<-- end if -->
+	} //<-- end function -->
+
 	/*************************************************************************** 
 	 * Sets openmeta tags
 	 *
@@ -120,7 +169,46 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
+	 * Sets spotlight tags
+	 *
+	 * @param 	string 	$tags 					space delimited tags to set
+	 * @return 	array	$this->spotlightTags	the set spotlight tags
+	 **************************************************************************/
+	public function setSpotlightTags($tags, $prefix = '&') {
+		try {
+			if ($tags) {
+				$tags = self::_makeSpotlightTags($tags, $prefix);
+			} //<-- end if -->
+
+			foreach ($this->files as $file) {
+				exec('osascript -e \'tell application "Finder" to set comment '.
+					'of file POSIX file "'.$file.'" to "'.$tags.'"\''
+				);
+			} //<-- end foreach -->
+			
+			$count = count($this->files);
+			$i = 0;
+
+			while ($i < $count) {
+				$this->spotlightTags[$i] = explode(' ', $tags);
+				
+				if (count($this->spotlightTags[$i]) > 1) {
+					sort($this->spotlightTags[$i]);
+				} //<-- end if -->
+				
+				$i++;
+			} //<-- end foreach -->
+
+			return $this->spotlightTags;
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
+	} //<-- end function -->
+
+	/*************************************************************************** 
 	 * Sets openmeta rating
 	 *
 	 * @param 	string 	$rating 		the rating
@@ -300,7 +388,23 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
+	 * Clear all spotlight tags
+	 *
+	 * @return 	boolean	TRUE
+	 **************************************************************************/
+	public function clearSpotlightTags($prefix = '&') {
+		try {
+			self::setSpotlightTags('', $prefix);
+			$this->spotlightTags = array();
+			return TRUE;
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
+	} //<-- end function -->
+
 	/*************************************************************************** 
 	 * Remove requested openmeta tags
 	 *
@@ -348,7 +452,55 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
+	 * Remove requested spotlight tags
+	 *
+	 * @param 	string 	$tags 				space delimited tags to remove
+	 * @return 	array	$spotlightTagList	the resulting spotlight tags
+	 **************************************************************************/
+	public function removeSpotlightTags($tags, $prefix = '&') {
+		try {
+			$tags = explode(' ', $tags); // string to array
+
+			if (!isset($this->spotlightTags)) {
+				self::getSpotlightTags();
+			} //<-- end if -->
+
+			$remainingTags = array();
+				
+			foreach ($this->spotlightTags as $file) {
+				$remainingTags[] = array_diff($file, $tags);
+			} //<-- end foreach -->
+			
+			$count = count($remainingTags);
+
+			if ($count > 0) {
+				$files = $this->files;
+										
+				foreach ($files as $key => $value) {
+					$tags = implode(' ', $remainingTags[$key]);
+					$this->files = array($value);
+					self::setSpotlightTags($tags, $prefix);
+				} //<-- end foreach -->
+			} //<-- end if -->
+
+			$this->files = $files;
+			$this->spotlightTags = $remainingTags;
+			$tags = array();
+			
+			foreach ($remainingTags as $tag) {
+				$openTagList[] = implode(', ', $tag); // array to string
+			} //<-- end foreach -->
+			
+			return $openTagList;
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
+	} //<-- end function -->
+
+	/*************************************************************************** 
 	 * Clear rating
 	 *
 	 * @return 	string	$result		the last line from openmeta command
@@ -363,6 +515,36 @@ class Openmeta {
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
+	} //<-- end function -->
+
+	/*************************************************************************** 
+	 * Adds prefix to make spotlight tags
+	 *
+	 * @param 	string 	$tags	space delimited tags to convert
+	 * @return 	string	$tags	space delimited tags with spotlight prefix
+	 * @throws 	Exception if $tags is empty
+	 **************************************************************************/
+	private function _makeSpotlightTags($tags, $prefix = '&') {
+		if (empty($tags)) {
+			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} else {
+			try {
+				$spotlightTags = explode(' ', $tags);
+				
+				foreach ($spotlightTags as $key => $value) {
+					$spotlightTags[$key] =  $prefix.$value;
+				} //<-- end foreach -->
+				
+				$tags = implode(' ', $spotlightTags);
+				return $tags;
+			} catch (Exception $e) { 
+				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+					__FUNCTION__.'() line '.__LINE__
+				);
+			} //<-- end try -->
+		} //<-- end if -->
 	} //<-- end function -->
 } //<-- end class -->
 ?>
