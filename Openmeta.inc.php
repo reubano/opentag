@@ -9,7 +9,7 @@ require_once $thisProjectDir.'/lib_general/General.inc.php';
 
 //<-- begin class -->
 class Openmeta {
-	protected $className 	= __CLASS__;	// class name
+	protected $className = __CLASS__;	// class name
 	protected $verbose;
 	protected $files;
 	protected $fileList;
