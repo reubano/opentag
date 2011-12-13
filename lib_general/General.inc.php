@@ -378,15 +378,19 @@ class General {
 			} //<-- end if -->
 			
 			foreach ($vars as $key => $val) {
+				if(!$key) {
+					$key = '0';
+				} //<-- end if -->
+				
 				if (!in_array($key, $ignoreList) && !empty($val)) {
 					if (is_array($val)) {
 						$definedVars[$key] = self::getVars($val);
 					} elseif (is_string($val)) { 
 						$definedVars[$key] = $val;
 					} //<-- end if -->
-				} //<-- end if --> 
+				} //<-- end if -->
 			} //<-- end foreach -->
-			
+
 			return $definedVars;
 		} catch (Exception $e) { 
 			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
