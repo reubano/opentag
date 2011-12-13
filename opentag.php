@@ -80,7 +80,7 @@ try {
 		} //<-- end if -->
 
 		if ($varmode) {
-			print_r($general->getVars());
+			print_r($general->getVars(get_defined_vars()));
 		} //<-- end if -->
 		
 		exit(0);
