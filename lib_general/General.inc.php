@@ -17,11 +17,11 @@ class General {
 		'HTTP_POST_FILES', '_REQUEST', 'ignoreList',
 	);
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * The class constructor
 	 *
 	 * @param 	boolean $verbose	enable verbose comments
-	 *************************************************************************/
+	 **************************************************************************/
 	function __construct($verbose = FALSE) {
 		$this->verbose = $verbose;
 		if ($this->verbose) {
@@ -29,13 +29,13 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Returns the extension of a file
 	 *
 	 * @param 	string 	$file 		a filename or the path to a file
 	 * @return 	string	$ext		the file extension
 	 * @throws 	Exception if $file is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function getExtension($file) {
 		if (empty($file)) {
 			throw new Exception('Empty file passed from '.__CLASS__.'->'.
@@ -53,13 +53,13 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Returns the ordinal suffix of a num, e.g., 1st, 2nd, 3rd.
 	 *
 	 * @param 	integer	$num a number
 	 * @return 	string	$ext a number with the ordinal suffix
 	 * @throws 	Exception if $file is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function addOrdinal($num) {
 		try {
 			if (!in_array(($num % 100), array(11, 12, 13))){
@@ -80,7 +80,7 @@ class General {
 			} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Recursively searches an array for the nth occurance of a given value 
 	 * type and returns the corresponding key if successful. If passed a 
 	 * multi-dimensional array, it will returns an array of keys.
@@ -92,7 +92,7 @@ class General {
 	 * @return 	mixed	the key (or array of keys) of the found element(s) 
 	 * @throws 	Exception if it can't find enough elements
 	 * @throws 	Exception if $needle is invalid
-	 *************************************************************************/
+	 **************************************************************************/
 	public function arraySearchType($needle, $haystack, $n = 1) {
 		try {
 			$i = 0; // needle element counter
@@ -156,7 +156,7 @@ class General {
 		} //<-- end try -->
 	} //<-- end function -->
 	
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Writes data to a file 
 	 * 
 	 * @param 	string 	$content 	the data to write to the file 
@@ -164,7 +164,7 @@ class General {
 	 * @return 	boolean	TRUE
 	 * @throws 	Exception if $content is empty
 	 * @throws 	Exception if $file exists as a non-empty file
-	 *************************************************************************/
+	 **************************************************************************/
 	public function write2File($content, $file) {
 		if (empty($content)) { // check to make sure $content isn't empty
 			throw new Exception('Empty content passedfrom '.__CLASS__.'->'.
@@ -193,14 +193,14 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Returns an array from csv data
 	 *
 	 * @param 	string 	$csvFile		the path to a csv file 
 	 * @param 	string 	$fieldDelimiter the csv field delimiter 
 	 * @return 	array	$content		array of csv data
 	 * @throws 	Exception if $csvFile does not exist
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function csv2Array($csvFile, $fieldDelimiter = ',') {		
 		if (!file_exists($csvFile)) {
 			throw new Exception('File '.$csvFile.' does not exist from '.
@@ -228,7 +228,7 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Converts an array to string while adding and extra string to beginning
 	 * and end of each element
 	 *
@@ -240,7 +240,7 @@ class General {
 	 *								string added to the beginning and end of
 	 *								each array element
 	 * @throws 	Exception if $content is not an array 
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function extraImplode($content, $extra = '\'', $delimiter = ' ') {		
 		if (!is_array($content)) {
 			throw new Exception('Please use an array from '.
@@ -259,13 +259,13 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Returns an array from a multiline string
 	 *
 	 * @param 	string 	$content	a multiline string 
 	 * @return 	array	$content	array (one element from each line in the
 	 *								string)
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function lines2Array($content) {		
 		try {
 			$content = explode("\n", $content); // turn string to array
@@ -278,12 +278,12 @@ class General {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Reads input from STDIN
 	 *
 	 * @return 	string	$string	data read from STDIN
 	 * @throws 	Exception if there is no input
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function readSTDIN() {
 		try {
 			$string = NULL;
@@ -307,7 +307,7 @@ class General {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Performs array_combine() on a multi-dimensional array using the first 
 	 * element for the keys and the remaining elements as the values
 	 *
@@ -330,7 +330,7 @@ class General {
 	 *									$key3 => $value6))
 	 *
 	 * @throws 	Exception if $content is not a multi-dimensional array
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function arrayInsertKey($content) {	
 		if (!is_array($content[0])) {
 			throw new Exception('Please use a multi-dimensional array from '.
@@ -365,12 +365,12 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 	
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Recursively returns all defined variables
 	 *
 	 * @param 	array 	$ignoreList 	the variables to ignore 
 	 * @return 	array 	$definedVars	defined variables not in the ignore list
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function getVars($vars, $ignoreList = NULL) {
 		try {
 			if (empty($ignoreList)) {
@@ -399,13 +399,13 @@ class General {
 		} //<-- end try -->
 	} //<-- end function -->
 	
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Returns the filename without extension of a file
 	 *
 	 * @param 	string 	$file 	a filename or the path to a file
 	 * @return 	string	$base	filename without extension
 	 * @throws 	Exception if an empty value is passed
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function getBase($file) {
 		if (empty($file)) {
 			throw new Exception('Empty file passed from '.__CLASS__.'->'.
@@ -423,13 +423,13 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Returns the full path to files in the current directory
 	 *
 	 * @param 	array 	$files 	a file in the current directory
 	 * @return 	string	$base	filename without extension
 	 * @throws 	Exception if $files is not an array 
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function getFullPath($files) {
 		if (!is_array($files)) {
 			throw new Exception('Please use an array from '.
@@ -454,13 +454,13 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Writes a contents of a given file to a new file with LF line endings
 	 * 
 	 * @param 	string 	$file 		a filename or the path to a file
 	 * @return 	string	$tempFile	path to the temporary file created
 	 * @throws 	Exception if $file does not exist
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function makeLFLineEndings($file) {
 		if (!file_exists($file)) {
 			throw new Exception('File '.$file.' does not exist from '.
@@ -490,7 +490,7 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Performs a number or date format on the elements of a given key in a 
 	 * multi-dimensional array suitable for import into a sqlite database
 	 *	 
@@ -510,7 +510,7 @@ class General {
 	 * @return 	array	$newContent	new array with formatted values	
 	 * @throws 	Exception if $content is not a multi-dimensional array
 	 * @throws 	Exception if $format is invalid
-	 *************************************************************************/
+	 **************************************************************************/
 	public function formatArray($content, $key, $format) {
 		if (!is_array($content[0])) {
 			throw new Exception('Please use a multi-dimensional array from '.
@@ -563,7 +563,7 @@ class General {
 			} //<-- end if -->
 		} //<-- end function -->
 			
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Recursively replaces all occurrences of $needle with $replace on 
 	 * elements in an array
 	 * 
@@ -576,7 +576,7 @@ class General {
 	 *								replacements)
 	 *								
 	 * @return 	array	$newContent	new array with replaced values	
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function arraySubstitute($content, $needle, $replace) {
 		try {
 			foreach ($content as $haystack) {
@@ -599,7 +599,7 @@ class General {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Overwrites an array to a pre-existing csv file
 	 * 
 	 * @param 	string 	$content 		the data to write to the file 
@@ -607,7 +607,7 @@ class General {
 	 * @param 	string 	$fieldDelimiter the csv field delimiter 
 	 * @return 	boolean	TRUE
 	 * @throws 	Exception if $csvFile does not exist
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function overwriteCSV($content, $csvFile, $fieldDelimiter = ',') {	
 		if (!file_exists($csvFile)) {
 			throw new Exception('File .'.$csvFile.' does not exsit from '.
@@ -630,7 +630,7 @@ class General {
 		} //<-- end if -->
 	} //<-- end function -->
 			
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Writes an array to a csv file 
 	 *
 	 * @param 	string 	$content 		the data to write to the file 
@@ -639,7 +639,7 @@ class General {
 	 * @param 	string 	$fieldDelimiter the csv field delimiter 
 	 * @return 	boolean	TRUE
 	 * @throws 	Exception if $csvFile exists or is non-empty 
-	 *************************************************************************/ 
+	 **************************************************************************/ 
 	public function array2CSV($content, $csvFile, $fieldDelimiter = ',') {	
 		if (file_exists($csvFile) && filesize($csvFile) != 0) {
 			throw new Exception('File .'.$csvFile.' already exists from '.
