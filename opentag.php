@@ -94,7 +94,36 @@ try {
 
 	$files = $general->getFullPath($files);
 	$openmeta = new openmeta($files, $thisProjectDir);
+
+	if ($spotlight) {
+		if ($addTag) {
+			$spotlightTags = str_replace(',', ' ', $addTag);
+			$openmeta->addSpotlightTags($spotlightTags, $prefix);
+		} //<-- end if -->
+
+		if ($setTag) {
+			$spotlightTags = str_replace(',', ' ', $setTag);
+			$openmeta->setSpotlightTags($spotlightTags, $prefix);
+		} //<-- end if -->
+
+		if ($clearTag) {
+			$openmeta->clearSpotlightTags($prefix);
+		} //<-- end if -->
 	
+		if ($untag) {
+			$spotlightTags = str_replace(',', ' ', $untag);
+			$openmeta->removeSpotlightTags($spotlightTags, $prefix);
+		} //<-- end if -->
+
+		if ($tags) {
+			$spotlightTags = $openmeta->getSpotlightTags($prefix);
+			
+			foreach ($spotlightTags as $tag) {		
+				fwrite(STDOUT, "spotlight tags: $tag\n");
+			} //<-- end foreach -->
+		} //<-- end if -->
+	} //<-- end if -->
+
 	if ($addTag) {
 		$openTags = str_replace(',', ' ', $addTag);
 		$openmeta->addOpenTags($openTags);
@@ -109,11 +138,6 @@ try {
 		$openmeta->clearOpenTags();
 	} //<-- end if -->
 
-	if ($addTag) {
-		$openTags = str_replace(',', ' ', $addTag);
-		$openmeta->addOpenTags($openTags);
-	} //<-- end if -->
-
 	if ($untag) {
 		$openTags = str_replace(',', ' ', $untag);
 		$openmeta->removeOpenTags($openTags);
@@ -125,14 +149,6 @@ try {
 		foreach ($openTags as $tag) {
 			fwrite(STDOUT, "openmeta tags: $tag\n");
 		} //<-- end foreach -->
-		
-		if ($spotlight) {
-			$spotlightTags = $openmeta->getSpotlightTags($prefix);
-			
-			foreach ($spotlightTags as $tag) {		
-				fwrite(STDOUT, "spotlight tags: $tag\n");
-			} //<-- end foreach -->
-		} //<-- end if -->
 	} //<-- end if -->
 	
 	if ($rate) {
