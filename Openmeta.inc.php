@@ -45,7 +45,7 @@ class Openmeta {
 	 **************************************************************************/
 	public function addOpenTags($tags) {
 		if (empty($tags)) {
-			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
+			throw new Exception('Empty tag passed from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
@@ -74,7 +74,7 @@ class Openmeta {
 					
 				return $this->openTags;
 			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				throw new Exception($e->getMessage().' from '.$this->className.'->'.
 					__FUNCTION__.'() line '.__LINE__
 				);
 			} //<-- end try -->
@@ -90,7 +90,7 @@ class Openmeta {
 	 **************************************************************************/
 	public function addSpotlightTags($tags, $prefix = '&') {
 		if (empty($tags)) {
-			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
+			throw new Exception('Empty tag passed from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
@@ -124,7 +124,7 @@ class Openmeta {
 				$this->files = $files;
 				return $this->spotlightTags;
 			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				throw new Exception($e->getMessage().' from '.$this->className.'->'.
 					__FUNCTION__.'() line '.__LINE__
 				);
 			} //<-- end try -->
@@ -140,7 +140,7 @@ class Openmeta {
 	 **************************************************************************/
 	public function setOpenTags($tags) {
 		if (empty($tags)) {
-			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
+			throw new Exception('Empty tag passed from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
@@ -162,7 +162,7 @@ class Openmeta {
 
 				return $this->openTags;
 			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				throw new Exception($e->getMessage().' from '.$this->className.'->'.
 					__FUNCTION__.'() line '.__LINE__
 				);
 			} //<-- end try -->
@@ -202,7 +202,7 @@ class Openmeta {
 
 			return $this->spotlightTags;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -217,7 +217,7 @@ class Openmeta {
 	 **************************************************************************/
 	public function setRating($rating) {
 		if (empty($rating)) {
-			throw new Exception('Empty rating passed from '.__CLASS__.'->'.
+			throw new Exception('Empty rating passed from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
@@ -226,7 +226,7 @@ class Openmeta {
 				exec("$this->openmeta -r $this->rating -p $this->fileList");
 				return $this->rating;
 			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				throw new Exception($e->getMessage().' from '.$this->className.'->'.
 					__FUNCTION__.'() line '.__LINE__
 				);
 			} //<-- end try -->
@@ -276,7 +276,7 @@ class Openmeta {
 			
 		return $tags;
 		} catch (Exception $e) {
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -339,7 +339,7 @@ class Openmeta {
 			
 			return $tags;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -365,7 +365,7 @@ class Openmeta {
 			
 			return $this->rating;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -382,7 +382,7 @@ class Openmeta {
 			$this->openTags = array();
 			return $result;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -399,7 +399,7 @@ class Openmeta {
 			$this->spotlightTags = array();
 			return TRUE;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -421,9 +421,11 @@ class Openmeta {
 
 			$remainingTags = array();
 				
-			foreach ($this->openTags as $file) {
-				$remainingTags[] = array_diff($file, $tags);
-			} //<-- end foreach -->
+			if ($this->openTags) {
+				foreach ($this->openTags as $file) {
+					$remainingTags[] = array_diff($file, $tags);
+				} //<-- end foreach -->
+			} //<-- end if -->
 
 			$count = count($remainingTags);
 
@@ -440,13 +442,15 @@ class Openmeta {
 			$this->openTags = $remainingTags;
 			$tags = array();
 			
-			foreach ($remainingTags as $tag) {
-				$openTagList[] = implode(', ', $tag); // array to string
-			} //<-- end foreach -->
-			
-			return $openTagList;
+			if ($remainingTags) {
+				foreach ($remainingTags as $tag) {
+					$openTagList[] = implode(', ', $tag); // array to string
+				} //<-- end foreach -->
+				
+				return $openTagList;
+			} //<-- end if -->
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -494,7 +498,7 @@ class Openmeta {
 			
 			return $openTagList;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -511,7 +515,7 @@ class Openmeta {
 			$this->rating = 0;
 			return $result;
 		} catch (Exception $e) { 
-			throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} //<-- end try -->
@@ -526,7 +530,7 @@ class Openmeta {
 	 **************************************************************************/
 	private function _makeSpotlightTags($tags, $prefix = '&') {
 		if (empty($tags)) {
-			throw new Exception('Empty tag passed from '.__CLASS__.'->'.
+			throw new Exception('Empty tag passed from '.$this->className.'->'.
 				__FUNCTION__.'() line '.__LINE__
 			);
 		} else {
@@ -540,7 +544,7 @@ class Openmeta {
 				$tags = implode(' ', $spotlightTags);
 				return $tags;
 			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.__CLASS__.'->'.
+				throw new Exception($e->getMessage().' from '.$this->className.'->'.
 					__FUNCTION__.'() line '.__LINE__
 				);
 			} //<-- end try -->
