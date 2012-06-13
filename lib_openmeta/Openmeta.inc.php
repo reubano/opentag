@@ -17,7 +17,7 @@ class Openmeta {
 	public $openTags;
 	public $spotlightTags;
 	public $rating;
-	
+
 	/*************************************************************************** 
 	 * The class constructor
 	 *
@@ -544,8 +544,8 @@ class Openmeta {
 				$tags = implode(' ', $spotlightTags);
 				return $tags;
 			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.$this->className.'->'.
-					__FUNCTION__.'() line '.__LINE__
+				throw new Exception($e->getMessage().' from '.$this->className
+					.'->'.__FUNCTION__.'() line '.__LINE__
 				);
 			} //<-- end try -->
 		} //<-- end if -->
