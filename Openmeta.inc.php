@@ -1,7 +1,7 @@
 <?php
-/******************************************************************************
+/*******************************************************************************
  * purpose: contains metadata functions
- *****************************************************************************/
+ ******************************************************************************/
 
 //<-- begin class -->
 class Openmeta {
@@ -12,11 +12,11 @@ class Openmeta {
 	public $openTags;
 	public $spotlightTags;
 	public $rating;
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * The class constructor
 	 *
 	 * @param 	boolean $verbose	enable verbose comments
-	 *************************************************************************/
+	 **************************************************************************/
 	function __construct($files, $verbose = FALSE) {
 		$this->files = $files;
 		$this->verbose = $verbose;
@@ -26,13 +26,13 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Adds openmeta tags
 	 *
 	 * @param 	string 	$tags			space delimited tags to add
 	 * @return 	string	$this->openTags	the resulting openmeta tags
 	 * @throws 	Exception if $tags is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function addOpenTags($tags) {
 		if (empty($tags)) {
 			throw new Exception('Empty string passed from '.__CLASS__.'->'.
@@ -61,13 +61,13 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Sets openmeta tags
 	 *
 	 * @param 	string 	$tags 			space delimited tags to set
 	 * @return 	string	$this->openTags	the set openmeta tags
 	 * @throws 	Exception if $tags is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function setOpenTags($tags) {
 		if (empty($tags)) {
 			throw new Exception('Empty string passed from '.__CLASS__.'->'.
@@ -91,13 +91,13 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Sets openmeta rating
 	 *
 	 * @param 	string 	$rating the rating
 	 * @return 	string	$this->rating	the set rating
 	 * @throws 	Exception if $rating is empty
-	 *************************************************************************/
+	 **************************************************************************/
 	public function setRating($rating) {
 		if (empty($rating)) {
 			throw new Exception('Empty rating passed from '.__CLASS__.'->'.
@@ -116,11 +116,11 @@ class Openmeta {
 		} //<-- end if -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Return openmeta tags
 	 *
 	 * @return 	string	$this->openTags	the current openmeta tags
-	 *************************************************************************/
+	 **************************************************************************/
 	public function getOpenTags() {
 		try {
 			if (!isset($this->openTags)) {
@@ -147,12 +147,12 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Return spotlight tags
 	 *
 	 * @param 	string	$prefix					spotlight comment tag prefix
 	 * @return 	string	$this->spotlightTags	the current spotlight tags
-	 *************************************************************************/
+	 **************************************************************************/
 	public function getSpotlightTags($prefix) {
 		try {
 			if (!isset($this->spotlightTags)) {
@@ -178,11 +178,11 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Return rating
 	 *
 	 * @return 	string	$this->rating	the rating
-	 *************************************************************************/
+	 **************************************************************************/
 	public function getRating() {
 		try {
 			if (!isset($this->rating)) {
@@ -197,11 +197,11 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Clear all openmeta tags
 	 *
 	 * @return 	string	$result		the last line from openmeta command
-	 *************************************************************************/
+	 **************************************************************************/
 	public function clearOpenTags() {
 		try {
 			$result = exec("$this->openmeta -s -p $this->files");
@@ -214,12 +214,12 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Remove requested openmeta tags
 	 *
 	 * @param 	string 	$tags 	space delimited tags to remove
 	 * @return 	string	$this->openTags	the resulting openmeta tags
-	 *************************************************************************/
+	 **************************************************************************/
 	public function removeOpenTags($tags) {
 		try {
 			$tags = explode(' ', $tags); // string to array
@@ -244,11 +244,11 @@ class Openmeta {
 		} //<-- end try -->
 	} //<-- end function -->
 
-	/************************************************************************** 
+	/*************************************************************************** 
 	 * Clear rating
 	 *
 	 * @return 	string	$result		the last line from openmeta command
-	 *************************************************************************/
+	 **************************************************************************/
 	public function clearRating() {
 		try {
 			$result = exec("$this->openmeta -r 0 -p $this->files");
