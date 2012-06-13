@@ -2,12 +2,12 @@
 <?php
 /**
  *******************************************************************************
- * Program description
+ * This program manipulates a files open meta tags and spotlight comment
  *******************************************************************************
  */
  
 $thisProjectDir		= dirname(__FILE__);
-$timeStamp			= date("mdy").'_'.date("His"); // format to mmddyy_hhmmss
+$timeStamp			= date("Ymd_His"); // format to yyyymmdd_hhmmss
 $stdin 				= FALSE;
 $prefix 			= '&';
 $addTag				= NULL;
