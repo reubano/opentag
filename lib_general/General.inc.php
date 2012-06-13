@@ -59,7 +59,6 @@ class General {
 	 *
 	 * @param 	integer	$num a number
 	 * @return 	string	$ext a number with the ordinal suffix
-	 * @throws 	Exception if $file is empty
 	 **************************************************************************/
 	public function addOrdinal($num) {
 		try {
@@ -74,11 +73,38 @@ class General {
 			
 			return $num.'th';
 			
-			} catch (Exception $e) { 
-				throw new Exception($e->getMessage().' from '.$this->className
-					.'->'.__FUNCTION__.'() line '.__LINE__
-				);
-			} //<-- end try -->
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.$this->className
+				.'->'.__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
+	} //<-- end function -->
+
+	/*************************************************************************** 
+	 * A date function supporting the microseconds.
+	 *
+	 * @param 	string	$format 		time format
+	 * @param 	integer	$uTimeStamp 	time (defaults to the value of time())
+	 * @return 	string	$newTimestamp 	time with microseconds
+	 **************************************************************************/
+	public function udate($format, $uTimeStamp = NULL) {
+		try {
+			if (is_null($uTimeStamp)) {
+				$uTimeStamp = microtime(true);
+			}
+			
+			$timeStamp = floor($uTimeStamp);
+			$milliSeconds = round(($uTimeStamp - $timeStamp) * 1000000);
+			$newTimestamp = date(preg_replace('`(?<!\\\\)u`', $milliSeconds, 
+				$format), $timeStamp
+			);
+			
+			return $newTimestamp;
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.$this->className
+				.'->'.__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
 	} //<-- end function -->
 
 	/*************************************************************************** 
@@ -102,7 +128,7 @@ class General {
 				// check to make sure I haven't found too many elements
 				if ($i < $n) {
 					// It's not an array, so look for needle elements
-					if (!is_array($value)) { 
+					if (!is_array($value)) {
 						switch ($needle){
 							case 'numeric':
 								if (is_numeric($value)) {
@@ -371,18 +397,18 @@ class General {
 			$combinedArray = array(); 
 			$keyCount = count($keys);
 			$valueCount = count($values);
-		    $difference = $keyCount - $valueCount;
-		    
-		    if ($difference > 0) {
-		    	for ($i = 0; $i < $difference; $i++) {
+			$difference = $keyCount - $valueCount;
+			
+			if ($difference > 0) {
+				for ($i = 0; $i < $difference; $i++) {
 					$values[] = $values[$valueCount - 1];
-		    	}
+				}
 			}
 			
 			for ($i=0, $keyCount; $i < $keyCount; $i++) {
 				$combinedArray[$keys[$i]] = $values[$i];
 			} 
-		        
+				
 			return $combinedArray;
 		} catch (Exception $e) { 
 			throw new Exception($e->getMessage().' from '.$this->className.'->'.
@@ -400,10 +426,10 @@ class General {
 	 * @throws 	Exception if there is no input
 	 **************************************************************************/
 	public function in_arrayi($needle, $haystack) {
-        return in_array(strtolower($needle), 
-        	array_map('strtolower', $haystack)
-        );
-    }
+		return in_array(strtolower($needle), 
+			array_map('strtolower', $haystack)
+		);
+	}
 
 	/*************************************************************************** 
 	 * Hashes the contents of an array
@@ -442,7 +468,7 @@ class General {
 	} //<-- end function -->
 
 	/*************************************************************************** 
-	 * Delete elements of a multidimensional array all all the sub-arrays are
+	 * Delete elements of a multidimensional array if all the sub-arrays are
 	 * empty
 	 *
 	 * @param 	array 	$content	multi-dimensional array
@@ -474,6 +500,49 @@ class General {
 						}
 					} //<-- end foreach -->
 				} //<-- end foreach -->
+			} catch (Exception $e) { 
+				throw new Exception($e->getMessage().' from '.$this->className
+					.'->'.__FUNCTION__.'() line '.__LINE__
+				);
+			} //<-- end try -->
+		} //<-- end if -->
+	} //<-- end function -->
+
+	/*************************************************************************** 
+	 * Returns the first set of completely non-null sub-arrays or the first
+	 * sub-array if none are non-null
+	 *
+	 * @param 	array 	$content	multi-dimensional array
+	 * @throws 	Exception if $content is not a multi-dimensional array
+	 **************************************************************************/
+	public function getNonNull($content) {
+		if (!is_array(current($content))) {
+			throw new Exception('Please use a multi-dimensional array'.
+				'from '.$this->className.'->'.__FUNCTION__.'() line '.
+				__LINE__
+			);
+		} else {
+			try {			
+				// loop through each array
+				$count = count($content);
+				
+				for ($i = 0; $i < $count; $i++) {
+					$lastkey = array_pop(array_keys($content[$i]));
+
+					foreach ($content[$i] as $subKey => $subValue) {
+						
+						if (is_null($subValue)) {
+							continue 2; // go to next array
+						} 
+						
+						if ($subKey == $lastkey) {
+							return $content[$i];
+						}
+					} //<-- end foreach -->
+					
+					return $content[0];
+				} //<-- end foreach -->
+				 
 			} catch (Exception $e) { 
 				throw new Exception($e->getMessage().' from '.$this->className
 					.'->'.__FUNCTION__.'() line '.__LINE__
@@ -799,10 +868,10 @@ class General {
 		} else {
 			try {
 				$cmp = function (array $a, array $b) use ($key) {
-			    	return strcmp($a[$key], $b[$key]);
+					return strcmp($a[$key], $b[$key]);
 				};
 				
-			    usort($array, $cmp);
+				usort($array, $cmp);
 			} catch (Exception $e) { 
 				throw new Exception($e->getMessage().' from '.$this->className
 					.'->'.__FUNCTION__.'() line '.__LINE__
@@ -836,8 +905,93 @@ class General {
 	} //<-- end function -->			
 
 	/*************************************************************************** 
-	 * Recursively replaces all occurrences of $needle with $replace on 
-	 * elements in an array (by reference)
+	 * Recursively replaces all NULL elements with 0 in an array (by reference)
+	 * if a following element is non-null 
+	 * @param 	array 	$content	the array to perform the replacement on
+	 * @param 	string 	$replace	the replacement value that replaces $needle 
+	 *								(an array may be used to designate multiple 
+	 *								replacements)
+	 **************************************************************************/
+	public function arrayFillMissing(&$content) {	
+		try {
+			$count = count($content);
+			$keys = array_keys($content);
+			
+			for ($i = 0; $i < $count; $i++) {
+				$currkey = $keys[$i];
+				
+				// If it's not an array, continue checking	
+				if (!is_array($content[$currkey])) {
+					if (is_null($content[$currkey])) {
+						if ($i != 0 && $i != $count - 1) {
+							$prevkey = $keys[$i - 1];
+							$nextkey = $keys[$i + 1];
+							
+							if (!is_null($content[$nextkey])) {
+								$content[$currkey] = 0;
+							} //<-- end if -->
+							
+							if (!is_null($content[$prevkey])) {
+								$pass = FALSE;
+								
+								for ($j = $i; $j < $count; $j++) {
+									// check to see if there is at least one
+									// additional non-null value following
+									if (!is_null($content[$keys[$j]])) {
+										$pass = TRUE;
+										break;
+									} //<-- end if -->
+								} //<-- end for -->
+								
+								if ($pass) {
+									$content[$currkey] = 0;
+								} else {
+									// no more non-null values so exit loop
+									break; 
+								} //<-- end if -->
+							} //<-- end if -->
+						} //<-- end if -->
+					} //<-- end if -->
+				} else { // it IS an array, so recurse
+					self::arrayFillMissing($content[$currkey]);
+				} //<-- end if -->
+			} //<-- end foreach -->	
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
+	} //<-- end function -->
+
+	/*************************************************************************** 
+	 * Recursively replaces all NULLs with $replace in an array (by reference)
+	 * @param 	array 	$content	the array to perform the replacement on
+	 * @param 	string 	$replace	the replacement value that replaces $needle 
+	 *								(an array may be used to designate multiple 
+	 *								replacements)
+	 **************************************************************************/
+	public function arrayReplaceNull(&$content, $replace) {	
+		try {
+			foreach ($content as &$haystack) {
+				// If it's not an array, replace it
+				if (!is_array($haystack)) {
+					if (is_null($haystack)) {
+						$haystack = $replace;
+					} //<-- end if -->
+				} else { // it IS an array, so recurse
+					self::arrayReplaceNull($haystack, $replace);
+				} //<-- end if -->
+			} //<-- end foreach -->	
+		} catch (Exception $e) { 
+			throw new Exception($e->getMessage().' from '.$this->className.'->'.
+				__FUNCTION__.'() line '.__LINE__
+			);
+		} //<-- end try -->
+	} //<-- end function -->
+	
+	/*************************************************************************** 
+	 * Recursively replaces all occurrences of $needle with $replace in an 
+	 * an array (by reference)
 	 * 
 	 * @param 	array 	$content	the array to perform the replacement on
 	 * @param 	string 	$needle		the value being searched for (an array may 
