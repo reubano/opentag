@@ -1,17 +1,5 @@
 # opentag
 
-## LICENSE:
-
-This file is part of opentag.
-
-opentag is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version. 
-
-opentag is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License along with this program. If not, see [GNU.](http://www.gnu.org/licenses/)
-
-Copyright © 2010 [Reuben Cummings](mailto:reubano@gmail.com?subject=opentag)
-
 ## INTRODUCTION:
 
 [opentag](http://github.com/reubano/opentag) is a command line program that converts CSV files to GPX files for importing into GPSPhotoLinker or similar geotagging programs. "opentag](http://github.com/reubano/opentag is distributed under the terms of the GNU General Public License (GPL) and has been tested on the following configuration:
@@ -119,3 +107,7 @@ _Make opentag executable and add ~/bin to your PATH variable so that you can run
 	
 	Arguments:
 	  file  file(s) to tag, enter '$' to read from standard input
+
+## LICENSE:
+
+opentag is distributed under the MIT License, the same as [openmeta](http://code.google.com/p/openmeta/) on which this library depends on.
