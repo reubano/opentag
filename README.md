@@ -110,4 +110,4 @@ _Make opentag executable and add ~/bin to your PATH variable so that you can run
 
 ## LICENSE:
 
-opentag is distributed under the MIT License, the same as [openmeta](http://code.google.com/p/openmeta/) on which this library depends on.
+opentag is distributed under the [MIT License](http://opensource.org/licenses/mit-license.php), the same as [openmeta](http://code.google.com/p/openmeta/) on which this library depends on.
