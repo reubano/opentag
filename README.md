@@ -13,7 +13,6 @@
 * [PHP 5.3+](http://pear.php.net/manual/en/installation.php)
 * [PEAR](http://us2.php.net/downloads.php)
 * [Console_CommandLine](http://pear.php.net/package/Console_CommandLine/download)
-* [reubano/opentag](http://github.com/reubano/opentag)
 
 ## PREPARATION:
 
