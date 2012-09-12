@@ -6,6 +6,8 @@
  *******************************************************************************
  */
  
+date_default_timezone_set('Africa/Nairobi');
+
 $thisProjectDir		= dirname(__FILE__);
 $timeStamp			= date("Ymd_His"); // format to yyyymmdd_hhmmss
 $stdin 				= FALSE;
