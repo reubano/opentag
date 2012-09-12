@@ -2,7 +2,7 @@
 
 ## INTRODUCTION:
 
-[opentag](http://github.com/reubano/opentag) is a command line wrapper for [openmeta](http://code.google.com/p/openmeta/). It adds support for spotlight comments and, long options, and STDIN piping. It has been tested on the following configuration:
+[opentag](http://github.com/reubano/opentag) is a command line wrapper for [openmeta](http://code.google.com/p/openmeta/). It adds support for spotlight comments, long options, and STDIN piping. It has been tested on the following configuration:
 * MacOS X 10.7.4
 * PHP 5.3.15
 * Console_CommandLine 1.1.1
