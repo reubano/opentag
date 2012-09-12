@@ -40,27 +40,82 @@ _set the directory that you wish to hold the program_
 
 _clone opentag using [Git](http://git-scm.com/download) (recommended)_
 
-	git clone git://github.com/reubano/library.git
 	git clone git://github.com/reubano/opentag.git
 
 ## INSTALLATION:
+_Create symlink of opentag in your ~/bin directory_
 
+	if [-d $~/bin]; then mkdir ~/bin; fi
+	ln -s ./opentag/opentag.php ~/bin/opentag
+
+_Make opentag executable and add ~/bin to your PATH variable so that you can run 'opentag' from the command line_
+
+	chmod 755 ~/bin/opentag
+	echo 'export PATH=~/bin:$PATH' >> ~/.profile
+	. ~/.profile
 
 ## USING opentag:
-
+### Examples:
+	show tags
+	  opentag -T /path
+	
+	show tags and ratings for multiple files
+	  opentag -TR /path/1 /path/2
+	
+	show opentag and spotlight tags
+	  opentag -sT /path
+	
+	add tags foo and bar
+	  opentag -a foo,bar /path
+	
+	add opentag and spotlight tags (prefix spotlight tags with '@')
+	  opentag -sa -p '@' foo,bar /path
+	  
+	add tags foo and bar to all pdf files
+	  opentag -a foo,bar *.pdf
+	
+	set tags to foo and bar for all files with "portfolio" in the name
+	  ls | grep -i portfolio | opentag -s foo,bar $
+	
+	clear all tags
+	  opentag -c /path
+	
+	clear tag foo
+	  opentag -u foo /path
+	  
+	set rating (0 - 5 stars)
+	  opentag -r 3 /path
+	
+	show rating
+	  opentag -R /path
+	
+	clear rating
+	  opentag -U /path
+  
 ### Usage:
-	#!/usr/bin/env php
-	<?php
-	try {
-		require_once 'opentag.inc.php';
-		$time = time();
-		$imageObj = new opentag('src', 1000, 600);
-		$imageObj->execute();
-		$imageObj->saveFile("opentag/$time.png");
-		echo "done!\n";
-		exit(0);
-	} catch (Exception $e) {
-		fwrite(STDOUT, 'Program '.$program.': '.$e->getMessage()."\n");
-		exit(1);
-	}
-	?>
+	opentag [options] <file...>
+	
+	Options:
+	  -a tag(s), --atag=tag(s)    add tag(s) (use a comma to seperate multiple
+	                              tags)
+	  -c, --ctag                  clear all tags
+	  -d, --debug                 enables debug mode, displays the options and
+	                              arguments passed to the parser
+	  -p prefix, --prefix=prefix  spotlight comment tag prefix, defaults to '&'
+	  -r rating, --rate=rating    set rating (0 - 5)
+	  -R, --rating                show rating
+	  -s, --spotlight             apply tagging commands to spotlight comments
+	  -t tag(s), --stag=tag(s)    set tag(s) (use a comma to seperate multiple
+	                              tags)
+	  -T, --tags                  show all tags
+	  -u tag(s), --untag=tag(s)   remove tag(s) (use a comma to seperate
+	                              multiple tags)
+	  -U, --unrate                remove rating
+	  -v, --verbose               verbose output
+	  -V, --variables             enables variable mode, displays the value of
+	                              all program variables
+	  -h, --help                  show this help message and exit
+	  --version                   show the program version and exit
+	
+	Arguments:
+	  file  file(s) to tag, enter '$' to read from standard input
