@@ -57,7 +57,7 @@ _Make opentag executable and add ~/bin to your PATH variable so that you can run
 	  opentag -a foo,bar /path
 	
 	add opentag and spotlight tags (prefix spotlight tags with '@')
-	  opentag -sa -p '@' foo,bar /path
+	  opentag -sp '@' -a foo,bar /path
 	  
 	add tags foo and bar to all pdf files
 	  opentag -a foo,bar *.pdf

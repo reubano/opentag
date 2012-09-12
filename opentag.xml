@@ -17,7 +17,7 @@ add tags foo and bar
   opentag -a foo,bar /path
 
 add opentag and spotlight tags (prefix spotlight tags with '@')
-  opentag -sa -p '@' foo,bar /path
+  opentag -sp '@' -a foo,bar /path
   
 add tags foo and bar to all pdf files
   opentag -a foo,bar *.pdf
