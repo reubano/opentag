@@ -2,9 +2,9 @@
 
 ## INTRODUCTION:
 
-[opentag](http://github.com/reubano/opentag) is a command line program that converts CSV files to GPX files for importing into GPSPhotoLinker or similar geotagging programs. "opentag](http://github.com/reubano/opentag is distributed under the terms of the GNU General Public License (GPL) and has been tested on the following configuration:
-* MacOS X 10.5.8
-* PHP 5.3.0
+[opentag](http://github.com/reubano/opentag) is a command line wrapper for [openmeta](http://code.google.com/p/openmeta/). It adds support for spotlight comments and, long options, and STDIN piping. It has been tested on the following configuration:
+* MacOS X 10.7.4
+* PHP 5.3.15
 * Console_CommandLine 1.1.1
 
 ## REQUIREMENTS:
