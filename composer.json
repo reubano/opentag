@@ -1,0 +1,29 @@
+{
+	"authors": [
+    {
+	    "name": "Reuben Cummings",
+	    "email": "reubano@gmail.com",
+	    "homepage": "http://reubano.github.io/",
+	    "role": "Lead"
+    }
+	],
+  "name": "opentag",
+  "description": "A php CLI wrapper for openmeta",
+  "version": "0.9.0",
+  "homepage": "http://github.com/reubano/opentag",
+  "environment": "console",
+  "license": "MIT",
+	"type": "project",
+  "keywords": ["application", "openmeta", "tagging", "filesystem", "php", "macos-x"],
+	"repositories": [
+		{"type": "pear", "url": "pear.php.net"}
+	],
+  "require": {
+		 "pear-pear/Console_CommandLine": "*"
+  },
+  "bin": ["opentag.php"],
+	"archive": {
+		"exclude": [".gitignore", "pearfarm.spec", ".gittrees", "*.tgz",
+			"package.xml"]
+	}
+}
