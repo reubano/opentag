@@ -14,7 +14,7 @@
   "environment": "console",
   "license": "MIT",
 	"type": "project",
-  "keywords": ["application", "tagging", "filesystem", "php", "macos-x"],
+  "keywords": ["application", "tagging", "php", "macos-x"],
 	"repositories": [
 		{"type": "pear", "url": "pear.php.net"}
 	],
